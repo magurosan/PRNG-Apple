@@ -4,14 +4,16 @@
 
    USAGE:
     % clang -O3 mt19937-64-neon.c -o neon_test 
-    % ./neon_test bench                                                                                       
+    % ./neon_test bench      
+    100000000 random numbers generation time                                                                                 
     Original:       178.26 ms
     NEON:           145.24 ms
     NEON x2:         95.45 ms
     NEON ARRAY:      84.76 ms
 
     % clang -O3 -march=armv8.4-a+simd+sha3 -DHAVE_SHA3 mt19937-64-neon.c -o m1test 
-    % ./m1test bench                                                                       
+    % ./m1test bench 
+    100000000 random numbers generation time                                               
     Original:            173.37 ms
     NEON+SHA3:           111.67 ms
     NEON+SHA3 x2:         86.29 ms
@@ -110,7 +112,6 @@ uint64x2_t vbcaxq_u64_wrapper(uint64x2_t a, uint64x2_t b, uint64x2_t c)
 #define EOR3(a,b,c) veorq_u64(a, veorq_u64(b,c)) 
 #define BCAX(a,b,c) veorq_u64(a, vbicq_u64(b,c))
 #endif
-
 
 #if defined(__apple_build_version__) 
 #define INSERT_IF_TRUE(a,b,mask)  __asm__ ("bit.16b %1,%2,%3" :"=w"(a) : "w"(a), "w"(b), "w"(mask))
@@ -477,6 +478,7 @@ double bench_array()
 int main(int argc, char* argv[])
 {
     if (argc >= 2 && strcmp(argv[1], "bench") == 0){
+        printf("%d random numbers generation time\n", COUNT);
 #if defined(HAVE_SHA3)
         printf("Original:        %10.2f ms\n", 1000*bench_original());
         printf("NEON+SHA3:       %10.2f ms\n", 1000*bench1());
